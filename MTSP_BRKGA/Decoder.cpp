@@ -74,7 +74,7 @@ double Decoder::decode( std::vector< double >& chromosome) const  {
         // Vetor de Ferramentas
         std::vector<int> toolsVet = setUpToolsVet(chromosome);
         
-        printToolsVet(toolsVet);
+        //printToolsVet(toolsVet);
 
     }
     
