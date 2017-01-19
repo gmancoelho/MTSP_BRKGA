@@ -1,0 +1,3 @@
+BestResultsWithCap contém as mesmas soluções, porém, conta também as primeiras ferramentas como troca. Desta maneira, é adicionado ao resultado a capacidade do magazine.
+
+Originalmente, o Antônio, Amaya, Al Fawzan e Bard não contam esta configuração inicial.

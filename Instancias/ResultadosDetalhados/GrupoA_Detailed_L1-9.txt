@@ -1,0 +1,42 @@
+Instance: L1-9.txt
+
+Execution time: 37
+Number of switches before ILS: 9
+Number of switches after ILS: 9
+Box size: 5
+
+Final solution: 5 - 7 - 9 - 10 - 13 - 15 - 14 - 1 - 6 - 3 - 11 - 4 - 12 - 2 - 8 - 
+
+Task - > Tools
+Task 1 -> 1 6 
+Task 2 -> 4 7 
+Task 3 -> 1 2 3 4 
+Task 4 -> 2 3 8 
+Task 5 -> 5 
+Task 6 -> 2 6 7 
+Task 7 -> 6 
+Task 8 -> 4 7 
+Task 9 -> 5 
+Task 10 -> 4 
+Task 11 -> 1 8 
+Task 12 -> 2 7 8 
+Task 13 -> 4 
+Task 14 -> 3 5 7 8 
+Task 15 -> 5 
+
+
+Task 01 |  0 0 0 0 1 0 0 0 0 0 0 0 0 0 0
+Task 02 |  0 0 0 0 0 1 0 0 0 0 0 0 0 0 0
+Task 03 |  0 0 0 0 1 0 0 0 0 0 0 0 0 0 0
+Task 04 |  0 0 0 1 0 0 0 0 0 0 0 0 0 0 0
+Task 05 |  0 0 0 1 0 0 0 0 0 0 0 0 0 0 0
+Task 06 |  0 0 0 0 1 0 0 0 0 0 0 0 0 0 0
+Task 07 |  0 0 1 0 1 0 1 1 0 0 0 0 0 0 0
+Task 08 |  1 0 0 0 0 1 0 0 0 0 0 0 0 0 0
+Task 09 |  0 1 0 0 0 1 1 0 0 0 0 0 0 0 0
+Task 10 |  1 1 1 1 0 0 0 0 0 0 0 0 0 0 0
+Task 11 |  1 0 0 0 0 0 0 1 0 0 0 0 0 0 0
+Task 12 |  0 1 1 0 0 0 0 1 0 0 0 0 0 0 0
+Task 13 |  0 1 0 0 0 0 1 1 0 0 0 0 0 0 0
+Task 14 |  0 0 0 1 0 0 1 0 0 0 0 0 0 0 0
+Task 15 |  0 0 0 1 0 0 1 0 0 0 0 0 0 0 0
