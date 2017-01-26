@@ -42,11 +42,11 @@ Population::~Population() {
 }
 
 unsigned Population::getN() const {
-	return population[0].size();
+	return (int)population[0].size();
 }
 
 unsigned Population::getP() const {
-	return population.size();
+	return (int)population.size();
 }
 
 double Population::getBestFitness() const {

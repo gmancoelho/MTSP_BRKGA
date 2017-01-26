@@ -123,9 +123,12 @@ private:
 typedef vector< Node > vNode;
 typedef signed char**  sCC;
 
-
 // Variávies Globais
 
+double bestSolValue = 0;
+vector<double> bestSolVet;
+
+vector<set<int> > toolsPerTask;
 
 // Dados do Problema
 
@@ -205,11 +208,17 @@ void readProblem(string fileName)
             j=0;
         }
     }
-    
-    for (i = 0; i < numberOfTools; i++){
-        for (j = 0; j < numberOfTasks; j++){
+    set<int> auxSet;
+    for (i = 0; i < numberOfTasks; i++){
+        for (j = 0; j < numberOfTools; j++){
             cout << (int)Matrix_Graph[i][j] << " ";
+            if((int)Matrix_Graph[j][i] == 1){
+                auxSet.insert(j);
+            }
+            
         }
+        toolsPerTask.push_back(auxSet);
+        auxSet.clear();
         cout << endl;
     }
 }
@@ -260,13 +269,15 @@ void buildGraph()
         Graph.push_back(no);                     //adiciona o vertice nó no grafo
     }
     
-    imprimeGrafo();
+    //imprimeGrafo();
     
 }
 
 void setUpBRKGA(){
-
-    const unsigned n = numberOfTools;		// size of chromosomes
+    
+    cout<< "N: "<< numberOfTasks << endl << endl;
+    
+    const unsigned n = 5;		// size of chromosomes
     const unsigned p = 100;		// size of population
     const double pe = 0.25;		// fraction of population to be the elite-set
     const double pm = 0.10;		// fraction of population to be replaced by mutants
@@ -274,17 +285,19 @@ void setUpBRKGA(){
     const unsigned K = 3;		// number of independent populations
     const unsigned MAXT = 1;	// number of threads for parallel decoding
     
+    // initialize the decoder
     Decoder decoder = Decoder(Matrix_Graph,
                               numberOfTools,
-                              numberOfTasks);				// initialize the decoder
+                              numberOfTasks,
+                              sizeOfMagazine,
+                              &toolsPerTask);
     
     const long unsigned rngSeed = 0;	// seed to the random number generator
     
     MTRand rng(rngSeed);				// initialize the random number generator
-    
+        
     // initialize the BRKGA-based heuristic
-    BRKGA< Decoder, MTRand > algorithm(n,
-                                             p,
+    BRKGA< Decoder, MTRand > algorithm(n,p,
                                              pe,
                                              pm,
                                              rhoe,
@@ -308,22 +321,23 @@ void setUpBRKGA(){
         }
     } while (generation < MAX_GENS);
     
-    // print the fitness of the top 10 individuals of each population:
-    std::cout << "Fitness of the top 10 individuals of each population:" << std::endl;
+    bestSolValue = algorithm.getBestFitness();
     
-    const unsigned bound = std::min(p, unsigned(10));	// makes sure we have 10 individuals
+    bestSolVet = vector<double>(numberOfTasks,0);
     
-    for(unsigned i = 0; i < K; ++i) {
-        std::cout << "Population #" << i << ":" << std::endl;
-        for(unsigned j = 0; j < bound; ++j) {
-            std::cout << "\t" << j << ") "
-            << algorithm.getPopulation(i).getFitness(j) << std::endl;
-        }
-    }
+//    std::memcpy(bestSolVet,
+//                algorithm.getBestChromosome().data(),
+//                numberOfTasks * sizeof(double));
+    
     
     std::cout << "Best solution found has objective value = "
 	 		<< algorithm.getBestFitness() << std::endl;
+    
+    std::cout << "Best solution found has this chormossome setup = "
+	 		<< &algorithm.getBestChromosome() << std::endl;
 
+
+    
 }
 
 /*
@@ -354,6 +368,41 @@ void printSolution(string inputFileName, int solutionValue, double time, int run
     string outputFileName =  "Results/Solution_" + inputFileName;
 
 	ofstream fpSolution(outputFileName);				//file that contains the information about the solution of a problem instance
+    
+    fpSolution << "Instancia: " << inputFileName << std::endl;
+    
+    fpSolution << "Número de tarefas: " << numberOfTasks << std::endl;
+    fpSolution << "Número de ferramentas: " << numberOfTools << std::endl;
+    fpSolution << "Tamanho da caixa de ferramentas: " << sizeOfMagazine << std::endl;
+    
+    fpSolution << "Matriz de entrada:" << sizeOfMagazine << std::endl;
+    for (int i = 0; i < numberOfTools; i++){
+        for (int j = 0; j < numberOfTasks; j++){
+            fpSolution << (int)Matrix_Graph[i][j] << " ";
+        }
+        fpSolution << endl;
+    }
+    
+    fpSolution << "Solução para a execução:" << run << std::endl;
+    fpSolution << "Tempo decorrido:" << time << std::endl;
+    fpSolution << "Melhor valor encontrado para as trocas:" << bestSolValue << std::endl;
+    fpSolution << "Configuração da ordem das tarefas a serem executadas:"<< std::endl;
+    
+    for (int i = 0; i < numberOfTools; i++){
+        fpSolution << bestSolVet[i] << " ";
+    }
+    fpSolution << endl;
+
+    fpSolution << "Configuração da matriz final:"<< std::endl;
+
+    for (int i = 0; i < numberOfTools; i++){
+        for (int j = 0; j < numberOfTasks; j++){
+            int index = bestSolVet[i];
+            fpSolution << (int)Matrix_Graph[index][j] << " ";
+        }
+        fpSolution << endl;
+    }
+    
 }
 
 /*
