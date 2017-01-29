@@ -5,129 +5,23 @@
 #include <fstream>
 #include <chrono>
 #include <vector>
+#include <set>
 
 #include "brkgaAPI/BRKGA.h"
 #include "brkgaAPI/MTRand.h"
-#include "Decoder.h"
+#include "Node.h"
 
 using namespace std;
 using namespace std::chrono;
 
-// Class Grafo
-
-struct Aresta{
-    int origem;
-    int peso;
-    int destino;
-};
-
-class Node{
-    
-public:
-    
-    Node()
-    {
-        degree = 0;
-        visited = false;
-        id = 0;
-    }
-    
-    vector <Aresta> adjacencia;
-    
-    void addArestas(vector<Aresta> arestas){
-        adjacencia = arestas;
-    }
-    
-    vector<Aresta> getArestas(){
-        return adjacencia;
-    }
-    
-    void setDegree(int i)
-    {
-        degree = i;
-    }
-    
-    void setVisited(bool b)
-    {
-        visited = b;
-    }
-    
-    void setId(int i)
-    {
-        id = i;
-    }
-    
-    int getDegree()
-    {
-        return degree;
-    }
-    
-    bool wasVisited()
-    {
-        return visited;
-    }
-    
-    int getId()
-    {
-        return id;
-    }
-    
-    bool getExist(){
-        return exist;
-    }
-    
-    void setExist(bool b){
-        exist = b;
-    }
-    
-    void addAresta(int origem, int destino, int peso){
-        Aresta nova;
-        nova.origem = origem;
-        nova.peso = peso;
-        nova.destino = destino;
-        adjacencia.push_back(nova);
-    }
-    
-    int getArestaOrigem(int cont){
-        return adjacencia[cont].origem;
-    }
-    
-    int getArestadestino(int origem){
-        return adjacencia[origem].destino;
-    }
-    int getArestapeso(int origem){
-        return adjacencia[origem].peso;
-    }
-    
-    int recuperaPeso(int origem, int destino){
-        int peso;
-        for(int i = 0; i < (int) adjacencia.size(); i++){
-            if(adjacencia[i].origem == origem && adjacencia[i].destino == destino){
-                peso = adjacencia[i].peso;
-                return peso;
-            }
-            
-        }
-        return -1;
-        
-    }
-    
-    
-private:
-    int degree;  //stores the degree of the node
-    int id;      //stores the index of the node
-    bool visited; //indicates whether the node has been reached by the BFS
-    bool exist;
-};
-
 typedef vector< Node > vNode;
 typedef signed char**  sCC;
+
 
 // Variávies Globais
 
 double bestSolValue = 0;
-vector<double> bestSolVet;
-
+vector<int> bestSolVet;
 vector<set<int> > toolsPerTask;
 
 // Dados do Problema
@@ -141,6 +35,13 @@ int numberOfTasks = 1; // Colunas
 // Grafo
 
 vNode Graph;
+
+/* Funcoes */
+
+double ktns(std::vector<int> taksOrder);
+int getToolNeededSoonest(std::vector<int> spareTools,
+                         std::vector<int> missingTasks);
+std::vector<int> decodeChromosome(std::vector< double >& chromosome);
 
 /*
 Imprime Grafo
@@ -157,7 +58,6 @@ void imprimeGrafo(){
         cout << endl;
     }
 }
-
 
 /*
  Reads the problem from a file specified by fileName
@@ -272,36 +172,180 @@ void buildGraph()
     //imprimeGrafo();
     
 }
+// Decoder
+
+std::vector<int> decodeChromosome(std::vector< double > chromosome){
+    
+    typedef std::pair< double, unsigned > ValueKeyPair;
+    std::vector< ValueKeyPair > rank(chromosome.size());
+    
+    for(int i = 0; i < (int)chromosome.size(); i++) {
+        rank[i] = ValueKeyPair(chromosome[i], i);
+    }
+    
+    // Here we sort 'permutation', which will then produce a permutation of [n]
+    // stored in ValueKeyPair::second:
+    std::sort(rank.begin(), rank.end());
+    
+    // permutation[i].second is in {0, ..., n - 1}; a permutation can be obtained as follows
+    std::vector< int > permutation;
+    for(std::vector< ValueKeyPair >::const_iterator i = rank.begin(); i != rank.end(); ++i) {
+        permutation.push_back(i->second);
+    }
+    
+    return permutation;
+}
+
+class Decoder {
+public:
+    double decode(const std::vector< double >& chromosome) const  {
+        
+        double myFitness = 0.0;
+        
+        std::vector< int > permutation = decodeChromosome(chromosome);
+       
+        myFitness = ktns(permutation);
+        
+        // Return the fitness:
+        return myFitness;
+    }
+};
+
+// KTNS
+
+double ktns(std::vector<int> taksOrder){
+    
+    std::set<int> magazine;
+    
+    // Adiciona todas as ferramentas da tarefa 1 a caixa
+    double fitness = toolsPerTask[taksOrder[0]].size();
+    magazine = toolsPerTask[taksOrder[0]];
+    
+    for(int task = 1; task < numberOfTasks; task++){
+        int emptySpaceInMag = sizeOfMagazine - (int)magazine.size();
+        std::set<int> setTools = std::set<int>(toolsPerTask[taksOrder[task]].begin(),toolsPerTask[taksOrder[task]].end());
+        
+        //verifica se existe espaco vazio no magazine
+        if(emptySpaceInMag >= setTools.size()){
+            magazine.insert(setTools.begin(),setTools.end());
+            fitness += setTools.size();
+            
+        }else{
+            
+            // E preciso fazer trocas
+            
+            std::vector<int>::iterator it;
+            
+            std::vector<int> diff(sizeOfMagazine,-1);
+            std::vector<int> keepInMag(sizeOfMagazine,-1);
+            std::vector<int> spareTools(sizeOfMagazine,-1);
+            
+            
+            // The difference of two sets is formed by the elements that are present in the first set, but not in the second one.
+            it = std::set_difference (setTools.begin(), setTools.end(),
+                                      magazine.begin(), magazine.end(),
+                                      spareTools.begin());
+            spareTools.resize(it-spareTools.begin());
+            
+            it = std::set_difference (magazine.begin(), magazine.end(),
+                                      setTools.begin(), setTools.end(),
+                                      diff.begin());
+            diff.resize(it-diff.begin());
+            
+            it = std::set_intersection (magazine.begin(), magazine.end(),
+                                        setTools.begin(), setTools.end(),
+                                        keepInMag.begin());
+            
+            keepInMag.resize(it-keepInMag.begin());
+            
+            
+            // diff contem as ferramentas presentes na tarefa corrente e nao estao no magazine
+            // e preciso fazer diff.size trocas no magazine
+            fitness += (int)diff.size();
+            
+            magazine = std::set<int>(keepInMag.begin(),
+                                     keepInMag.end());
+            
+            if( (int)diff.size() == (sizeOfMagazine - (int)keepInMag.size()) ){
+                // caso a diferenca seja igual ao tamanho do magazine..troca-se todas as pecas
+                magazine.insert(diff.begin(),
+                                diff.end());
+                
+            }else{
+                // e preciso procurar qual ferramenta retirar do magazine
+                for(int numTroca = 0; numTroca < (int)diff.size(); numTroca++){
+                    
+                    magazine.erase(getToolNeededSoonest(spareTools,
+                                                     std::vector<int>(taksOrder.begin() + task ,taksOrder.end())));
+                }
+                magazine.insert(diff.begin(),diff.end());
+            }
+            
+        }// Fim else
+    }// Fim For
+    
+    return fitness;
+}
+
+int getToolNeededSoonest(std::vector<int> spareTools,
+                         std::vector<int> missingTasks){
+    
+    typedef std::pair< int, int > Pair;
+    std::vector< Pair > menosTrocas;
+    
+    for (int i =0; i < (int)spareTools.size(); i++) {
+        int tool = spareTools[i];
+        int posNeeded = 0;
+        while( toolsPerTask[missingTasks[posNeeded]].find(tool) == toolsPerTask[missingTasks[posNeeded]].end()){
+            posNeeded++;
+        }
+        menosTrocas.push_back(Pair(posNeeded,tool));
+    }
+    
+    std::sort(menosTrocas.begin(),
+              menosTrocas.end());
+    
+    
+    return menosTrocas[0].second;
+}
+
+
+void printToolsVet(std::vector<int> vet){
+    
+    for (int i = 0; i < vet.size(); i++) {
+        std::cout << vet[i] << " ";
+    }
+    std::cout<<std::endl;
+    
+}
+
+// BRKGA
 
 void setUpBRKGA(){
     
     cout<< "N: "<< numberOfTasks << endl << endl;
     
-    const unsigned n = 5;		// size of chromosomes
+    const unsigned n = numberOfTasks;		// size of chromosomes
     const unsigned p = 100;		// size of population
     const double pe = 0.25;		// fraction of population to be the elite-set
     const double pm = 0.10;		// fraction of population to be replaced by mutants
     const double rhoe = 0.70;	// probability that offspring inherit an allele from elite parent
     const unsigned K = 3;		// number of independent populations
     const unsigned MAXT = 1;	// number of threads for parallel decoding
-    
-    // initialize the decoder
-    Decoder decoder = Decoder(Matrix_Graph,
-                              numberOfTools,
-                              numberOfTasks,
-                              sizeOfMagazine,
-                              &toolsPerTask);
+
     
     const long unsigned rngSeed = 0;	// seed to the random number generator
     
     MTRand rng(rngSeed);				// initialize the random number generator
+    
+    Decoder decode;
         
     // initialize the BRKGA-based heuristic
     BRKGA< Decoder, MTRand > algorithm(n,p,
                                              pe,
                                              pm,
                                              rhoe,
-                                             decoder,
+                                             decode,
                                              rng,
                                              K,
                                              MAXT);
@@ -323,20 +367,16 @@ void setUpBRKGA(){
     
     bestSolValue = algorithm.getBestFitness();
     
-    bestSolVet = vector<double>(numberOfTasks,0);
-    
-//    std::memcpy(bestSolVet,
-//                algorithm.getBestChromosome().data(),
-//                numberOfTasks * sizeof(double));
-    
-    
     std::cout << "Best solution found has objective value = "
 	 		<< algorithm.getBestFitness() << std::endl;
     
-    std::cout << "Best solution found has this chormossome setup = "
-	 		<< &algorithm.getBestChromosome() << std::endl;
-
-
+    std::cout << "Best solution found has this chormossome setup" << std::endl;
+    
+    bestSolVet = decodeChromosome(algorithm.getBestChromosome());
+    
+    for(int i = 0; i < numberOfTasks; i++) {
+        std::cout << bestSolVet[i] <<  std::endl;
+    }
     
 }
 

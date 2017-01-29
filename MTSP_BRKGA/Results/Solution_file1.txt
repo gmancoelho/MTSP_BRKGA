@@ -1,0 +1,21 @@
+Instancia: file1.txt
+Número de tarefas: 5
+Número de ferramentas: 5
+Tamanho da caixa de ferramentas: 3
+Matriz de entrada:3
+1 1 1 0 0 
+0 1 0 1 1 
+1 0 0 1 0 
+0 0 1 0 1 
+0 1 1 1 0 
+Solução para a execução:1
+Tempo decorrido:4.43661
+Melhor valor encontrado para as trocas:7
+Configuração da ordem das tarefas a serem executadas:
+4 3 0 2 1 
+Configuração da matriz final:
+0 1 1 1 0 
+0 0 1 0 1 
+1 1 1 0 0 
+1 0 0 1 0 
+0 1 0 1 1 

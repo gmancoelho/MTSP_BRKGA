@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		3E8F6E091E2FB66800AABB6C /* Population.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3E8F6E051E2FB66800AABB6C /* Population.cpp */; };
-		3E8F6E0A1E2FB66800AABB6C /* Decoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3E8F6E071E2FB66800AABB6C /* Decoder.cpp */; };
 		3E8F6E0D1E2FB6C800AABB6C /* Main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3E8F6E0C1E2FB6C800AABB6C /* Main.cpp */; };
 /* End PBXBuildFile section */
 
@@ -25,13 +24,12 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		3E3019071E3047B900B95C8A /* Decoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Decoder.h; sourceTree = "<group>"; };
+		3E00274E1E3E4D01003A1133 /* Node.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Node.h; sourceTree = "<group>"; };
 		3E8F6DF81E2FB5EC00AABB6C /* MTSP_BRKGA */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = MTSP_BRKGA; sourceTree = BUILT_PRODUCTS_DIR; };
 		3E8F6E031E2FB66800AABB6C /* BRKGA.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BRKGA.h; sourceTree = "<group>"; };
 		3E8F6E041E2FB66800AABB6C /* MTRand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MTRand.h; sourceTree = "<group>"; };
 		3E8F6E051E2FB66800AABB6C /* Population.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Population.cpp; sourceTree = "<group>"; };
 		3E8F6E061E2FB66800AABB6C /* Population.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Population.h; sourceTree = "<group>"; };
-		3E8F6E071E2FB66800AABB6C /* Decoder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Decoder.cpp; sourceTree = "<group>"; };
 		3E8F6E081E2FB66800AABB6C /* Driver.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Driver.hpp; sourceTree = "<group>"; };
 		3E8F6E0C1E2FB6C800AABB6C /* Main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Main.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -66,8 +64,7 @@
 		3E8F6DFA1E2FB5EC00AABB6C /* MTSP_BRKGA */ = {
 			isa = PBXGroup;
 			children = (
-				3E3019071E3047B900B95C8A /* Decoder.h */,
-				3E8F6E071E2FB66800AABB6C /* Decoder.cpp */,
+				3E00274E1E3E4D01003A1133 /* Node.h */,
 				3E8F6E081E2FB66800AABB6C /* Driver.hpp */,
 				3E8F6E0C1E2FB6C800AABB6C /* Main.cpp */,
 				3E8F6E021E2FB66800AABB6C /* brkgaAPI */,
@@ -144,7 +141,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				3E8F6E091E2FB66800AABB6C /* Population.cpp in Sources */,
-				3E8F6E0A1E2FB66800AABB6C /* Decoder.cpp in Sources */,
 				3E8F6E0D1E2FB6C800AABB6C /* Main.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
