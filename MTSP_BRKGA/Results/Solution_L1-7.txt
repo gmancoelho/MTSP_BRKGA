@@ -1,0 +1,34 @@
+Instancia: L1-7.txt
+Número de tarefas: 8
+Número de ferramentas: 15
+Tamanho da caixa de ferramentas: 5
+Matriz de entrada:5
+0 0 0 0 0 1 0 0 
+0 0 1 0 1 1 0 0 
+0 0 0 1 1 1 0 0 
+1 0 0 0 0 0 0 0 
+1 0 0 0 0 0 1 0 
+0 0 0 1 1 0 0 1 
+0 0 0 0 0 0 0 1 
+0 0 0 0 0 0 1 1 
+0 0 0 1 0 0 0 1 
+1 1 1 0 0 0 1 0 
+1 0 1 0 1 0 1 0 
+1 0 0 1 0 0 0 0 
+0 0 0 1 0 1 0 0 
+0 0 0 0 0 1 1 0 
+0 1 0 0 0 0 0 1 
+Solução para a execução:1
+Tempo decorrido:3.40451
+Melhor valor encontrado para as trocas:5
+Configuração da ordem das tarefas a serem executadas:
+1 6 3 7 2 5 4 8 
+Configuração da matriz final:
+0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 
+0 0 0 1 1 0 0 1 0 0 0 0 0 0 0 
+0 0 0 1 1 1 0 0 0 0 0 0 0 0 0 
+0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 
+0 0 1 0 1 1 0 0 0 0 0 0 0 0 0 
+1 0 0 0 0 0 1 0 0 0 0 0 0 0 0 
+1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+0 0 0 0 0 0 1 1 0 0 0 0 0 0 0 

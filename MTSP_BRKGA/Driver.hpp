@@ -77,11 +77,13 @@ void readProblem(string fileName)
     }
     
     fscanf(file,"%d",&numberOfTasks); // Num Ferrametnas - Coluna
-    fscanf(file,"%d",&numberOfTools); // Num Tarefas - Linha
+    
+    fscanf(file,"%d",&numberOfTools); // Num Ferrametnas - Linha
 
     fscanf(file,"%d",&sizeOfMagazine); // Tamanho Magazine
     
-    cout << "\nInformacoes Lidas\nLinhas-Tarefas:  " << numberOfTools << "\nColunas-Ferramentas: " << numberOfTasks << "\nMag: " << sizeOfMagazine << endl;
+    cout << "\nInformacoes Lidas\nLinhas-Ferramentas:  " << numberOfTools
+         << "\nColunas-Tarefa: " << numberOfTasks << "\nMag: " << sizeOfMagazine << endl;
 
     
     Matrix_Graph = (signed char **) malloc (numberOfTools * sizeof (signed char*));
@@ -100,6 +102,7 @@ void readProblem(string fileName)
             break;
         
         Matrix_Graph[i][j] = num;
+        
         j++;
         
         // reseta coluna
@@ -108,18 +111,20 @@ void readProblem(string fileName)
             j=0;
         }
     }
+    
     set<int> auxSet;
+    
     for (i = 0; i < numberOfTasks; i++){
         for (j = 0; j < numberOfTools; j++){
-            cout << (int)Matrix_Graph[i][j] << " ";
-            if((int)Matrix_Graph[j][i] == 1){
+//            cout << (int)Matrix_Graph[i][j] << " ";
+            if((int)Matrix_Graph[i][j] == 1){
                 auxSet.insert(j);
             }
             
         }
         toolsPerTask.push_back(auxSet);
         auxSet.clear();
-        cout << endl;
+//        cout << endl;
     }
 }
 
@@ -245,6 +250,7 @@ double ktns(std::vector<int> taksOrder){
             it = std::set_difference (setTools.begin(), setTools.end(),
                                       magazine.begin(), magazine.end(),
                                       spareTools.begin());
+            
             spareTools.resize(it-spareTools.begin());
             
             it = std::set_difference (magazine.begin(), magazine.end(),
@@ -258,10 +264,18 @@ double ktns(std::vector<int> taksOrder){
             
             keepInMag.resize(it-keepInMag.begin());
             
+            fitness += (int)diff.size();
+            
+            if (spareTools.size() == 0){
+                  // diferenca entre o mag atual e as proxima tarefa for 0..pula tarefa
+                
+                magazine = std::set<int>(diff.begin(),
+                                         diff.end());
+                break;
+            }
             
             // diff contem as ferramentas presentes na tarefa corrente e nao estao no magazine
             // e preciso fazer diff.size trocas no magazine
-            fitness += (int)diff.size();
             
             magazine = std::set<int>(keepInMag.begin(),
                                      keepInMag.end());
@@ -375,8 +389,9 @@ void setUpBRKGA(){
     bestSolVet = decodeChromosome(algorithm.getBestChromosome());
     
     for(int i = 0; i < numberOfTasks; i++) {
-        std::cout << bestSolVet[i] <<  std::endl;
+        std::cout << bestSolVet[i]+1 << " ";
     }
+    std::cout<<std::endl;
     
 }
 
@@ -385,8 +400,6 @@ Terminates all data structures.
 */
 void termination()
 {
-	//.clear in all data structures
-	//=0 in all numeric variables
     Graph.clear();
 
     for (int i = 0;  i < numberOfTools; i++) {
@@ -398,6 +411,11 @@ void termination()
     sizeOfMagazine = 0;
     numberOfTools = 0; // Linha
     numberOfTasks = 0; // Colunas
+    bestSolVet.clear();
+    bestSolValue = NULL;
+    
+    toolsPerTask.clear();
+    
 }
 
 /*
@@ -428,16 +446,16 @@ void printSolution(string inputFileName, int solutionValue, double time, int run
     fpSolution << "Melhor valor encontrado para as trocas:" << bestSolValue << std::endl;
     fpSolution << "Configuração da ordem das tarefas a serem executadas:"<< std::endl;
     
-    for (int i = 0; i < numberOfTools; i++){
-        fpSolution << bestSolVet[i] << " ";
+    for (int i = 0; i < numberOfTasks; i++){
+        fpSolution << bestSolVet[i]+1 << " ";
     }
     fpSolution << endl;
 
     fpSolution << "Configuração da matriz final:"<< std::endl;
 
-    for (int i = 0; i < numberOfTools; i++){
-        for (int j = 0; j < numberOfTasks; j++){
-            int index = bestSolVet[i];
+    for (int i = 0; i < numberOfTasks; i++){
+        int index = bestSolVet[i];
+        for (int j = 0; j < numberOfTools; j++){
             fpSolution << (int)Matrix_Graph[index][j] << " ";
         }
         fpSolution << endl;

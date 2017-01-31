@@ -9,13 +9,13 @@ Matriz de entrada:3
 0 0 1 0 1 
 0 1 1 1 0 
 Solução para a execução:1
-Tempo decorrido:4.43661
+Tempo decorrido:5.38026
 Melhor valor encontrado para as trocas:7
 Configuração da ordem das tarefas a serem executadas:
-4 3 0 2 1 
+4 1 2 5 3 
 Configuração da matriz final:
-0 1 1 1 0 
 0 0 1 0 1 
 1 1 1 0 0 
-1 0 0 1 0 
 0 1 0 1 1 
+0 1 1 1 0 
+1 0 0 1 0 
