@@ -19,16 +19,23 @@ Matriz de entrada:5
 0 1 0 1 0 0 0 0 
 0 0 0 0 0 0 0 1 
 Solução para a execução:1
-Tempo decorrido:3.9507
+Tempo decorrido:4.14926
 Melhor valor encontrado para as trocas:6
 Configuração da ordem das tarefas a serem executadas:
 2 8 1 7 4 3 5 6 
 Configuração da matriz final:
-1 0 1 0 0 0 1 1 0 0 0 0 0 0 0 
-0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 
-0 0 1 0 1 0 1 1 0 0 0 0 0 0 0 
-0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 
-0 0 1 0 0 1 0 0 0 0 0 0 0 0 0 
-0 0 0 1 1 0 1 1 0 0 0 0 0 0 0 
-1 0 0 0 0 1 0 0 0 0 0 0 0 0 0 
-0 1 0 0 0 1 0 0 0 0 0 0 0 0 0 
+1 0 1 0 0 0 0 0 
+1 0 1 0 0 0 0 0 
+1 0 1 0 0 0 0 0 
+1 0 1 0 0 0 0 0 
+1 0 1 0 0 0 0 0 
+1 0 1 0 0 0 0 0 
+1 0 1 0 0 0 0 0 
+1 0 1 0 0 0 0 0 
+1 0 1 0 0 0 0 0 
+1 0 1 0 0 0 0 0 
+1 0 1 0 0 0 0 0 
+1 0 1 0 0 0 0 0 
+1 0 1 0 0 0 0 0 
+1 0 1 0 0 0 0 0 
+1 0 1 0 0 0 0 0 

@@ -82,8 +82,8 @@ void readProblem(string fileName)
 
     fscanf(file,"%d",&sizeOfMagazine); // Tamanho Magazine
     
-    cout << "\nInformacoes Lidas\nLinhas-Ferramentas:  " << numberOfTools
-         << "\nColunas-Tarefa: " << numberOfTasks << "\nMag: " << sizeOfMagazine << endl;
+   // cout << "\nInformacoes Lidas\nLinhas-Ferramentas:  " << numberOfTools
+        // << "\nColunas-Tarefa: " << numberOfTasks << "\nMag: " << sizeOfMagazine << endl;
 
     
     Matrix_Graph = (signed char **) malloc (numberOfTools * sizeof (signed char*));
@@ -113,19 +113,25 @@ void readProblem(string fileName)
     }
     
     set<int> auxSet;
-    
-    for (i = 0; i < numberOfTasks; i++){
-        for (j = 0; j < numberOfTools; j++){
-//            cout << (int)Matrix_Graph[i][j] << " ";
-            if((int)Matrix_Graph[i][j] == 1){
+    for (int k = 0; k < numberOfTasks; k++){
+        for(int j = 0; j < numberOfTools; j++){
+            if((int)Matrix_Graph[j][k] == 1){
                 auxSet.insert(j);
             }
-            
         }
         toolsPerTask.push_back(auxSet);
         auxSet.clear();
-//        cout << endl;
     }
+    
+//    set<int>::iterator iter;
+//    for(int i = 0;i<toolsPerTask.size();i++){
+//        for(iter=toolsPerTask[i].begin(); iter!=toolsPerTask[i].end();++iter){
+//            cout<<(*iter)<<endl;
+//        }
+//        cout<<endl;
+//    }
+    
+
 }
 
 /*
@@ -224,17 +230,20 @@ double ktns(std::vector<int> taksOrder){
     
     // Adiciona todas as ferramentas da tarefa 1 a caixa
     double fitness = toolsPerTask[taksOrder[0]].size();
+
     magazine = toolsPerTask[taksOrder[0]];
     
     for(int task = 1; task < numberOfTasks; task++){
+        
         int emptySpaceInMag = sizeOfMagazine - (int)magazine.size();
+        
         std::set<int> setTools = std::set<int>(toolsPerTask[taksOrder[task]].begin(),toolsPerTask[taksOrder[task]].end());
         
         //verifica se existe espaco vazio no magazine
         if(emptySpaceInMag >= setTools.size()){
             magazine.insert(setTools.begin(),setTools.end());
             fitness += setTools.size();
-            
+
         }else{
             
             // E preciso fazer trocas
@@ -249,14 +258,15 @@ double ktns(std::vector<int> taksOrder){
             // The difference of two sets is formed by the elements that are present in the first set, but not in the second one.
             it = std::set_difference (setTools.begin(), setTools.end(),
                                       magazine.begin(), magazine.end(),
-                                      spareTools.begin());
+                                      diff.begin());
             
-            spareTools.resize(it-spareTools.begin());
+            diff.resize(it-diff.begin());
             
             it = std::set_difference (magazine.begin(), magazine.end(),
                                       setTools.begin(), setTools.end(),
-                                      diff.begin());
-            diff.resize(it-diff.begin());
+                                      spareTools.begin());
+            
+            spareTools.resize(it-spareTools.begin());
             
             it = std::set_intersection (magazine.begin(), magazine.end(),
                                         setTools.begin(), setTools.end(),
@@ -264,37 +274,34 @@ double ktns(std::vector<int> taksOrder){
             
             keepInMag.resize(it-keepInMag.begin());
             
-            fitness += (int)diff.size();
             
-            if (spareTools.size() == 0){
+            if (diff.size() == 0){
                   // diferenca entre o mag atual e as proxima tarefa for 0..pula tarefa
-                
-                magazine = std::set<int>(diff.begin(),
-                                         diff.end());
                 break;
-            }
-            
-            // diff contem as ferramentas presentes na tarefa corrente e nao estao no magazine
-            // e preciso fazer diff.size trocas no magazine
-            
-            magazine = std::set<int>(keepInMag.begin(),
-                                     keepInMag.end());
-            
-            if( (int)diff.size() == (sizeOfMagazine - (int)keepInMag.size()) ){
-                // caso a diferenca seja igual ao tamanho do magazine..troca-se todas as pecas
-                magazine.insert(diff.begin(),
-                                diff.end());
-                
             }else{
-                // e preciso procurar qual ferramenta retirar do magazine
-                for(int numTroca = 0; numTroca < (int)diff.size(); numTroca++){
+                fitness += (int)diff.size();
+                
+                // diff contem as ferramentas presentes na tarefa corrente e nao estao no magazine
+                // e preciso fazer diff.size trocas no magazine
+                
+                magazine = std::set<int>(keepInMag.begin(),
+                                         keepInMag.end());
+                
+                if( (int)diff.size() == (sizeOfMagazine - (int)keepInMag.size()) ){
+                    // caso a diferenca seja igual ao tamanho do magazine..troca-se todas as pecas
+                    magazine.insert(diff.begin(),
+                                    diff.end());
                     
-                    magazine.erase(getToolNeededSoonest(spareTools,
-                                                     std::vector<int>(taksOrder.begin() + task ,taksOrder.end())));
+                }else{
+                    // e preciso procurar qual ferramenta retirar do magazine
+                    for(int numTroca = 0; numTroca < (int)diff.size(); numTroca++){
+                        
+                        magazine.erase(getToolNeededSoonest(spareTools,
+                                                            std::vector<int>(taksOrder.begin() + task ,taksOrder.end())));
+                    }
+                    magazine.insert(diff.begin(),diff.end());
                 }
-                magazine.insert(diff.begin(),diff.end());
             }
-            
         }// Fim else
     }// Fim For
     
@@ -310,7 +317,7 @@ int getToolNeededSoonest(std::vector<int> spareTools,
     for (int i =0; i < (int)spareTools.size(); i++) {
         int tool = spareTools[i];
         int posNeeded = 0;
-        while( toolsPerTask[missingTasks[posNeeded]].find(tool) == toolsPerTask[missingTasks[posNeeded]].end()){
+        while( posNeeded < missingTasks.size() && toolsPerTask[missingTasks[posNeeded]].find(tool) == toolsPerTask[missingTasks[posNeeded]].end()){
             posNeeded++;
         }
         menosTrocas.push_back(Pair(posNeeded,tool));
@@ -453,10 +460,10 @@ void printSolution(string inputFileName, int solutionValue, double time, int run
 
     fpSolution << "Configuração da matriz final:"<< std::endl;
 
-    for (int i = 0; i < numberOfTasks; i++){
-        int index = bestSolVet[i];
-        for (int j = 0; j < numberOfTools; j++){
-            fpSolution << (int)Matrix_Graph[index][j] << " ";
+    for (int i = 0; i < numberOfTools; i++){
+        for (int j = 0; j < numberOfTasks; j++){
+            int index = bestSolVet[j];
+            fpSolution << (int)Matrix_Graph[i][index] << " ";
         }
         fpSolution << endl;
     }
